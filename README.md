@@ -2,7 +2,6 @@
 <img src="figs/approach.png" alt="image-20220411092013373" style="zoom: 100%;" />
 
 ## Code content
----
 ```c++
 .
 ├── examples
@@ -24,7 +23,6 @@
 ```
 
 ## Extract a single descriptor using our trained model
----
 Download [trained models](https://pan.baidu.com/s/1tVN6W6tmQdEvsI4W4upsHw) (keyword: wifh) and put `convauto` to `./logs`
 
 Extract a single descriptor
@@ -35,7 +33,6 @@ python examples/extract_single_feature.py --img_path=xxx.jpg
 - output dimension = `args.dimension*32`, where `args.dimension` is the dimension of the last kernel of CAE
 
 ## CAE-based descriptor training
----
 Download datasets from [BaiduYun-link](https://pan.baidu.com/s/14dSDY9yBr7d5VqmfG_mgCA), password: mguf
 
 It contains:
@@ -62,7 +59,6 @@ bash scripts/train_convAuto.sh alexnet 128 128 32 128 /data/hanjing xxx
 ```
 
 ## CAE-based descriptor testing
----
 Test VGG16+CAE
 ```bash
 # bash test_convAuto.sh ${method} ${dimension of the 1st kernel} ${dimension of the 2nd kernel} ${dimension of the last kernel} ${resume} ${dataset directory}
@@ -91,7 +87,6 @@ Test AlexNet
 bash scripts/test_convAuto.sh alexnet 128 128 32 logs/conv/alexnet/imagenet_matconvnet_alex.pth /data/hanjing
 ```
 ## Citation
----
 If you find this repo useful for your research, please consider citing the paper
 ```
 @inproceedings{ye2022self,
@@ -103,6 +98,5 @@ If you find this repo useful for your research, please consider citing the paper
 
 ```
 ## Acknowledgements
----
 The code is largely inspired by [OpenIBL](https://github.com/yxgeee/OpenIBL)
 
