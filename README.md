@@ -89,13 +89,12 @@ bash scripts/test_convAuto.sh alexnet 128 128 32 logs/conv/alexnet/imagenet_matc
 ## Citation
 If you find this repo useful for your research, please consider citing the paper
 ```
-@inproceedings{ye2022self,
-    title={Condition-Invariant and Compact Visual Place Description by Convolutional Autoencoder},
-    author={Hanjing Ye, Weinan Chen, Jingwen Yu, Li He, Yisheng Guan and Hong Zhang},
-    booktitle={Journal of Intelligent and Robotic Systems (under review)}
-    year={2022},
+@article{ye2022condition,
+  title={Condition-Invariant and Compact Visual Place Description by Convolutional Autoencoder},
+  author={Ye, Hanjing and Chen, Weinan and Yu, Jingwen and He, Li and Guan, Yisheng and Zhang, Hong},
+  journal={arXiv preprint arXiv:2204.07350},
+  year={2022}
 }
-
 ```
 ## Acknowledgements
 The code is largely inspired by [OpenIBL](https://github.com/yxgeee/OpenIBL)
