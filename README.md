@@ -97,5 +97,5 @@ If you find this repo useful for your research, please consider citing the paper
 }
 ```
 ## Acknowledgements
-The code is largely inspired by [OpenIBL](https://github.com/yxgeee/OpenIBL)
+-  [OpenIBL](https://github.com/yxgeee/OpenIBL)
 
