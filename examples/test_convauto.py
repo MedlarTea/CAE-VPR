@@ -36,14 +36,25 @@ def get_data(args):
     allDatasets["robotcar_qSnow_dbNight"] = datasets.create("robotcar", root, datelist=osp.join(root, 'datelist_for_convAuto.txt'), q_date='2015-02-03-08-45-10', db_val_date='2014-11-18-13-20-12', db_test_date='2014-12-16-18-44-24')
     allDatasets["robotcar_qSnow_dbSunCloud"] = datasets.create("robotcar", root, datelist=osp.join(root, 'datelist_for_convAuto.txt'), q_date='2015-02-03-08-45-10', db_val_date='2014-12-16-18-44-24', db_test_date='2014-11-18-13-20-12')
 
-    # uacampus
+    # # uacampus
     root = osp.join(args.data_dir, "uacampus")
     allDatasets["uacampus"] = datasets.create("uacampus", root)
 
-    # for single frame
+    # # for single frame
     root = osp.join(args.data_dir, "singleframe")
     allDatasets["Nordland_RAS2020"] = datasets.create("singleframe", root, city="Nordland_RAS2020")
 
+    # # synthia
+    root = osp.join(args.data_dir, "Synthia-NightToFall")
+    allDatasets["synthianighttofall"] = datasets.create("synthianighttofall", root)
+
+    # # sped
+    # root = osp.join(args.data_dir, "SPEDTEST")
+    # allDatasets["sped"] = datasets.create("sped", root)
+
+    # sped
+    # root = osp.join(args.data_dir, "Alderley")
+    # allDatasets["alderley"] = datasets.create("alderley", root)
 
     test_transformer_db = get_transformer_test(args.height, args.width)
     test_transformer_q = get_transformer_test(args.height, args.width, tokyo=(args.dataset=='tokyo'))
@@ -101,13 +112,24 @@ def get_model(args):
     # for vgg16, note:args.vlad==False
     elif args.arch == 'vgg16':
         # args.vlad = False
-        base_model = models.create("vgg16", cut_at_pooling=False, matconvnet='logs/vd16_offtheshelf_conv5_3_max.pth', pretrained=True, avgpooling=True)
+        base_model = models.create("vgg16", cut_at_pooling=False, matconvnet='logs/vd16_offtheshelf_conv5_3_max.pth', pretrained=True, avgpooling=False)
         pool_layer = models.create('netvlad', dim=base_model.feature_dim,num_clusters=args.num_clusters)
         model = models.create('embednet', base_model, pool_layer)
     # for alexnet, note:args.vlad==False
     elif args.arch == 'alexnet':
         # args.vlad = False
         model = models.create("alexnet", cut_layer="conv5", matconvnet='logs/conv/alexnet/imagenet_matconvnet_alex.pth', isForConvautoTrain=False)
+    # elif args.arch == 'sfrs':
+    #     args.vlad = True
+    #     args.reduction = True
+    #     base_model = models.create(args.arch, train_layers=args.layers, matconvnet='logs/vd16_offtheshelf_conv5_3_max.pth')
+    #     pool_layer = models.create('netvlad', dim=base_model.feature_dim)
+    #     model = models.create('embednet', base_model, pool_layer)
+    # elif args.arch == 'vgg16_sfrs':
+    #     # args.vlad = False
+    #     base_model = models.create("vgg16", cut_at_pooling=False, matconvnet='logs/vd16_offtheshelf_conv5_3_max.pth', pretrained=True, avgpooling=True)
+    #     pool_layer = models.create('netvlad', dim=base_model.feature_dim,num_clusters=args.num_clusters)
+    #     model = models.create('embednet', base_model, pool_layer)
 
     model.cuda(args.gpu)
     model = nn.parallel.DistributedDataParallel(
@@ -174,8 +196,8 @@ def main_worker(args):
         pResult = open(result_path, "w")
     # for pr-curve
     for name in allDatasets.keys():
-        if (len(allDatasets[name].q_test) > 8000):
-            continue
+        # if (len(allDatasets[name].q_test) > 8000):
+        #     continue
         if (args.rank==0):
             print("==========\nDataset:{}\n==========".format(name))
             pResult.write("==========Dataset:{}==========\n".format(name))

@@ -12,27 +12,20 @@ from scipy.spatial.distance import cdist,cosine
 import scipy.io as scio
 import os
 
-def load_gt(gt_csv, city_name, db_nums):
-    df = pd.read_csv(gt_csv)
-    gt_list=[]  # (img_nums, [1,2,3,...])
-    if city_name == "Gardens_point_RAS2020":
-        tol = 3
-    elif city_name == "Berlin_Halenseetrasse_RAS2020":
-        tol = 3
-    else:
-        tol = 3
-    for index, row in df.iterrows():
-        gt = row["Reference"]
-        if gt<tol:
-            gt = np.arange(0, gt+tol)
-        elif gt>=tol and gt<db_nums-tol:
-            gt = np.arange(gt-tol, gt+tol)
+def load_gt(gt_npy, q_nums, db_nums):
+    gt_npy = np.load(gt_npy, allow_pickle=True)
+    assert gt_npy.shape[0] == q_nums
+    assert gt_npy.shape[0] == db_nums
+    gt_list = []
+    for i in range(gt_npy.shape[0]):
+        gt = gt_npy[i][1]
+        if len(gt) == 0:
+            gt_list.append([])
         else:
-            gt = np.arange(gt-tol, db_nums) 
-        gt_list.append(gt.tolist())
+            gt_list.append(gt)
     return gt_list
 
-class SingleFrame(Dataset):
+class SPED(Dataset):
     """
     examples/data
     └── demo
@@ -45,12 +38,8 @@ class SingleFrame(Dataset):
         verbose (bool): print flag, default=True
     """
 
-    def __init__(self, root, city='BerlinA100_RAS2020', isjpg=False, verbose=True):
-        super(SingleFrame, self).__init__(root)
-
-        self.city = city
-        self.root = osp.join(self.root, self.city)
-        self.isjpg = isjpg
+    def __init__(self, root, verbose=True):
+        super(SPED, self).__init__(root)
 
         self.arrange()
         self.load_uacLike(verbose)
@@ -69,18 +58,15 @@ class SingleFrame(Dataset):
             print(self.root)
             raise RuntimeError("Dataset not found.")
 
-        query_dir = osp.join(self.root, 'Live')
-        db_dir = osp.join(self.root, 'Reference')
-        gt_csv = osp.join(self.root, 'GroundTruth.csv')
+        query_dir = osp.join(self.root, 'query')
+        db_dir = osp.join(self.root, 'ref')
+        gt_npy = osp.join(self.root, 'ground_truth_new.npy')
         
         query_image_paths = []
         query_img_nums = len(os.listdir(query_dir))
         for i in range(query_img_nums):
-            num = str(i).zfill(4)
-            if self.isjpg:
-                image_path = osp.join(query_dir, 'image{}.jpg'.format(num))
-            else:
-                image_path = osp.join(query_dir, 'image{}.png'.format(num))
+            num = str(i).zfill(7)
+            image_path = osp.join(query_dir, '{}.jpg'.format(num))
             if not osp.isfile(image_path):
                 raise RuntimeError("No image: {}".format(image_path))
             query_image_paths.append([image_path])
@@ -88,11 +74,8 @@ class SingleFrame(Dataset):
         db_image_paths = []
         db_img_nums = len(os.listdir(db_dir))
         for i in range(db_img_nums):
-            num = str(i).zfill(4)
-            if self.isjpg:
-                image_path = osp.join(db_dir, 'image{}.jpg'.format(num))
-            else:
-                image_path = osp.join(db_dir, 'image{}.png'.format(num))
+            num = str(i).zfill(7)
+            image_path = osp.join(db_dir, '{}.jpg'.format(num))
             if not osp.isfile(image_path):
                 raise RuntimeError("No image: {}".format(image_path))
             db_image_paths.append([image_path])
@@ -126,10 +109,10 @@ class SingleFrame(Dataset):
         identities += db_image_paths
 
         # print(identities)
-        gt = load_gt(gt_csv, self.city, db_img_nums)
+        gt = load_gt(gt_npy, query_img_nums, db_img_nums)
         # if rank == 0:
         #     print(gt)
-        meta = {'name': 'SingleFrame-{}'.format(self.city),
+        meta = {'name': 'SPED',
             'identities': identities, 'gt': gt}
         try:
             rank = dist.get_rank()

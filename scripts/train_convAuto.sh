@@ -35,7 +35,7 @@ examples/train_convauto.py --launcher pytorch --tcp-port ${PORT} \
   --width ${WIDTH} --height ${HEIGHT} -j ${WORKERS} --test-batch-size 16 \
   --lr ${LR} --weight-decay 0.001 --dimension ${DIMENSION} --d1 ${D1} --d2 ${D2}\
   --eval-step ${EVALSTEP} --epochs ${EPOCHS} --step-size 5 --bs ${BS}\
-  --logs-dir logs/convAuto/${DATASET}/${ARCH}/lr${LR}-bs$[${BS}*${GPUS}]-islayernorm${ISLAYERNORM}-d1-$3-d2-$4-dimension$[${DFEATURE}*${DIMENSION}]\
+  --logs-dir logs/convAuto/${DATASET}/${ARCH}/lr${LR}-bs$[${BS}*${GPUS}]-islayernorm${ISLAYERNORM}-d1-$2-d2-$3-dimension$[${DFEATURE}*${DIMENSION}]\
   --data-dir ${DATADIR} \
   --vgg16_resume ${RESUME} --arch ${ARCH} \
   --islayerNorm

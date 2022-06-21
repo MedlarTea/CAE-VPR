@@ -32,7 +32,7 @@ done
 CUDA_VISIBLE_DEVICES=0,1 $PYTHON -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=$PORT --use_env \
 examples/test_convauto.py --launcher pytorch \
     -a ${ARCH} \
-    --test-batch-size 16 -j 8 \
+    --test-batch-size 4 -j 8 \
     --resume ${RESUME} \
     --data_dir ${DATADIR} \
     --features ${FEATURES} --dimension ${DIMENSION} --d1 ${D1} --d2 ${D2}\

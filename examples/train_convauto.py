@@ -74,7 +74,7 @@ def get_data(args, iters):
     return dataset, train_loader, val_loader, test_loader, sampler
 
 def get_model(args):
-    if args.arch == 'vgg':
+    if args.arch == 'vgg' or args.arch == 'vgg_sfrs' or args.arch == 'vgg_sfrs_4':
         base_model = models.create("vgg16", cut_at_pooling=True, matconvnet='logs/vd16_offtheshelf_conv5_3_max.pth', pretrained=True)
         convAuto_model = models.create("convauto", d1=args.d1, d2=args.d2, dimension=args.dimension)
         model = models.create('vggconvauto', base_model, convAuto_model, islayerNorm=args.islayerNorm)
@@ -128,7 +128,7 @@ def main_worker(args):
     model = get_model(args)
 
     # Load from vgg_trained checkpoint
-    if args.arch == 'vgg' and args.vgg16_resume:
+    if (args.arch == 'vgg' or args.arch == 'vgg_sfrs' or args.arch == 'vgg_sfrs_4') and args.vgg16_resume:
         checkpoint = load_checkpoint(args.vgg16_resume)
         copy_state_dict(checkpoint['state_dict'], model)
         _best_recall5 = checkpoint['best_recall5']
@@ -207,7 +207,7 @@ if __name__ == '__main__':
     parser.add_argument('--height', type=int, default=480, help="input height")
     parser.add_argument('--width', type=int, default=640, help="input width")
     # model
-    parser.add_argument('--arch', type=str, default='vgg', choices=['vgg', 'alexnet'])
+    parser.add_argument('--arch', type=str, default='vgg', choices=['vgg', 'alexnet', 'vgg_sfrs', 'vgg_sfrs_4'])
     parser.add_argument('--dimension', type=int, default=1024)
     parser.add_argument('--d1', type=int, default=512)
     parser.add_argument('--d2', type=int, default=512)

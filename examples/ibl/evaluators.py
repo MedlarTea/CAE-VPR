@@ -247,7 +247,7 @@ def evaluate_pr(distmat, gt, gallery, pr_image_path=None, distri_curve_path=None
         np.save(trueMatches_path, np.array(trueMatches))
         falseMatches_path = distri_curve_path.strip('.png') + "_falseMatches.npy"
         np.save(falseMatches_path, np.array(falseMatches))
-        # draw_distribution(trueMatches, falseMatches, distri_curve_path)
+        draw_distribution(trueMatches, falseMatches, distri_curve_path)
     return auc
 
 def storeMatchingExamples(distmat, gt, query, gallery, matching_examples_path=None):

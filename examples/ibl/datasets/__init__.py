@@ -8,6 +8,10 @@ from .mapillary import Mapillary
 from .uacampus import Uacampus
 from .single_frame import SingleFrame
 from .robotcarSemantics import robotcarSemantics
+from .freiburg import Freiburg
+from .SPED import SPED
+from .SynthiaNightToFall import SynthiaNightToFall
+from .alderley import Alderley 
 
 
 __factory = {
@@ -17,7 +21,11 @@ __factory = {
     'uacampus': Uacampus,
     'mapillary': Mapillary,
     'singleframe':SingleFrame,
-    'robotcarSemantics':robotcarSemantics
+    'robotcarSemantics':robotcarSemantics,
+    'freiburg': Freiburg,
+    "sped": SPED,
+    "synthianighttofall": SynthiaNightToFall,
+    "alderley": Alderley
 }
 
 

@@ -45,6 +45,7 @@ class VGG(nn.Module):
         vgg = VGG.__factory[depth](pretrained=pretrained)
         layers = list(vgg.features.children())[:-2]
         self.base = nn.Sequential(*layers) # capture only feature part and remove last relu and maxpool
+        self.gap = None
         if maxpooling:
             self.gap = nn.AdaptiveMaxPool2d(1)  # maxpooling
         elif avgpooling:
@@ -90,15 +91,17 @@ class VGG(nn.Module):
         if self.cut_at_pooling:
             return x.view(x.size(0), -1) if self.isflatten==True else x
         
-        pool_x = self.gap(x)
-        pool_x = pool_x.view(pool_x.size(0), -1)
-        pool_x = F.normalize(pool_x, p=2, dim=1)  # L2 normalize
+        pool_x = x
+        if self.gap != None:
+            pool_x = self.gap(pool_x)
+            pool_x = pool_x.view(pool_x.size(0), -1)
+            pool_x = F.normalize(pool_x, p=2, dim=1)  # L2 normalize
 
         # for guiuded
-        if self.return_layer != None and not self.maxpooling and not self.avgpooling:
+        if self.return_layer != None and self.gap == None:
             # print(returnVector.shape, x.shape)
             return returnVector, x
-        elif self.return_layer != None and (self.maxpooling or self.avgpooling):
+        elif self.return_layer != None and self.gap != None:
             return pool_x, returnVector
         
         return pool_x, x
